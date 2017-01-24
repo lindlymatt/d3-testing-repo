@@ -1,6 +1,6 @@
 function bubbleChart() {
   // Constants for sizing
-  var width = 940;
+  var width = 940; // 940
   var height = 600;
 
   // tooltip for mouseover functionality
@@ -10,21 +10,8 @@ function bubbleChart() {
   // on which view mode is selected.
   var center = { x: width / 2, y: height / 2 };
 
-  var yearCenters = {
-    'Green Beans': { x: width / 3, y: height / 2 },
-    'Chinese Eggplant': { x: width / 2, y: height / 2 },
-    Asparagus: { x: 2 * width / 3, y: height / 2 }
-  };
-
-  // X locations of the year titles.
-  var yearsTitleX = {
-    'Green Beans': 80,
-    'Chinese Eggplant': width / 2,
-    'Asparagus': width - 160,
-  };
-
   // @v4 strength to apply to the position forces
-  var forceStrength = 0.03;
+  var forceStrength = 0.01;
 
   // These will be set in create_nodes and create_vis
   var svg = null;
@@ -46,14 +33,14 @@ function bubbleChart() {
   // @v4 Before the charge was a stand-alone attribute
   //  of the force layout. Now we can use it as a separate force!
   function charge(d) {
-    return -Math.pow(d.radius, 2.0) * forceStrength;
+    return -Math.pow(d.radius, 2.11) * forceStrength;
   }
 
   // Here we create a force layout and
   // @v4 We create a force simulation now and
   //  add forces to it.
   var simulation = d3.forceSimulation()
-    .velocityDecay(0.2)
+    .velocityDecay(0.05)
     .force('x', d3.forceX().strength(forceStrength).x(center.x))
     .force('y', d3.forceY().strength(forceStrength).y(center.y))
     .force('charge', d3.forceManyBody().strength(charge))
@@ -65,9 +52,9 @@ function bubbleChart() {
 
   // Nice looking colors - no reason to buck the trend
   // @v4 scales now have a flattened naming scheme
-  var fillColor = d3.scaleOrdinal()
-    .domain([0])
-    .range(['#beccae', '#beccae', '#7aa25c']);
+  var fillColor = d3.scaleQuantile()
+    .domain([1, 9])
+    .range(['#ACCE89', '#426F42', '#324F17']);
 
 
   /*
@@ -152,8 +139,8 @@ function bubbleChart() {
       .attr('fill', function (d) {
         return fillColor(d.value);
       })
-      .attr('stroke', function (d) { return d3.rgb(fillColor(d.value)).darker(); })
-      .attr('stroke-width', 2)
+      .attr('stroke', function (d) { return d3.rgb(fillColor(d.value)).darker() }) // .darker()
+      .attr('stroke-width', 1)
       .on('mouseover', showDetail)
       .on('mouseout', hideDetail);
 
@@ -279,7 +266,7 @@ function bubbleChart() {
   function hideDetail(d) {
     // reset outline
     d3.select(this)
-      .attr('stroke', d3.rgb(fillColor(d.value)).darker());
+      .attr('stroke', d3.rgb(fillColor(d.value)).darker()); // .darker()
 
     tooltip.hideTooltip();
   }
