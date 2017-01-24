@@ -4,23 +4,23 @@ function bubbleChart() {
   var height = 600;
 
   // tooltip for mouseover functionality
-  var tooltip = floatingTooltip('gates_tooltip', 240);
+  var tooltip = floatingTooltip('growing_gardens_tt', 240);
 
   // Locations to move bubbles towards, depending
   // on which view mode is selected.
   var center = { x: width / 2, y: height / 2 };
 
   var yearCenters = {
-    2008: { x: width / 3, y: height / 2 },
-    2009: { x: width / 2, y: height / 2 },
-    2010: { x: 2 * width / 3, y: height / 2 }
+    'Green Beans': { x: width / 3, y: height / 2 },
+    'Chinese Eggplant': { x: width / 2, y: height / 2 },
+    Asparagus: { x: 2 * width / 3, y: height / 2 }
   };
 
   // X locations of the year titles.
   var yearsTitleX = {
-    2008: 160,
-    2009: width / 2,
-    2010: width - 160
+    'Green Beans': 80,
+    'Chinese Eggplant': width / 2,
+    'Asparagus': width - 160,
   };
 
   // @v4 strength to apply to the position forces
@@ -66,7 +66,7 @@ function bubbleChart() {
   // Nice looking colors - no reason to buck the trend
   // @v4 scales now have a flattened naming scheme
   var fillColor = d3.scaleOrdinal()
-    .domain(['low', 'medium', 'high'])
+    .domain([0])
     .range(['#beccae', '#beccae', '#7aa25c']);
 
 
@@ -149,8 +149,10 @@ function bubbleChart() {
     var bubblesE = bubbles.enter().append('circle')
       .classed('bubble', true)
       .attr('r', 0)
-      .attr('fill', function (d) { return fillColor(d.group); })
-      .attr('stroke', function (d) { return d3.rgb(fillColor(d.group)).darker(); })
+      .attr('fill', function (d) {
+        return fillColor(d.value);
+      })
+      .attr('stroke', function (d) { return d3.rgb(fillColor(d.value)).darker(); })
       .attr('stroke-width', 2)
       .on('mouseover', showDetail)
       .on('mouseout', hideDetail);
@@ -190,7 +192,7 @@ function bubbleChart() {
    * x force.
    */
   function nodeYearPos(d) {
-    return yearCenters[d.year].x;
+    return yearCenters[d.name].x;
   }
 
 
@@ -246,10 +248,10 @@ function bubbleChart() {
 
     years.enter().append('text')
       .attr('class', 'year')
-      .attr('x', function (d) { return yearsTitleX[d]; })
+      .attr('x', (d => yearsTitleX[d]))
       .attr('y', 40)
       .attr('text-anchor', 'middle')
-      .text(function (d) { return d; });
+      .text((d) => d);
   }
 
 
@@ -261,15 +263,12 @@ function bubbleChart() {
     // change outline to indicate hover state.
     d3.select(this).attr('stroke', 'black');
 
-    var content = '<span class="name">Title: </span><span class="value">' +
+    var content = '<span class="name">Vegetable Name: </span><span class="value">' +
       d.name +
       '</span><br/>' +
-      '<span class="name">Amount: </span><span class="value">$' +
+      '<span class="name">Number of Vegetables Logged: </span><span class="value">' +
       addCommas(d.value) +
-      '</span><br/>' +
-      '<span class="name">Year: </span><span class="value">' +
-      d.year +
-      '</span>';
+      '</span><br/>';
 
     tooltip.showTooltip(content, d3.event);
   }
@@ -280,7 +279,7 @@ function bubbleChart() {
   function hideDetail(d) {
     // reset outline
     d3.select(this)
-      .attr('stroke', d3.rgb(fillColor(d.group)).darker());
+      .attr('stroke', d3.rgb(fillColor(d.value)).darker());
 
     tooltip.hideTooltip();
   }

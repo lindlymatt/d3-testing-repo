@@ -70,7 +70,22 @@ exports.seed = function (knex, Promise) {
           id: 13,
           plot_id: 5,
           produce_id: 5
-        })
+        }),
+        knex('produce_plots').insert({
+          id: 14,
+          plot_id: 4,
+          produce_id: 4
+        }),
+        knex('produce_plots').insert({
+          id: 15,
+          plot_id: 4,
+          produce_id: 4
+        }),
+        knex('produce_plots').insert({
+          id: 16,
+          plot_id: 4,
+          produce_id: 4
+        }),
       ]);
     });
 };
